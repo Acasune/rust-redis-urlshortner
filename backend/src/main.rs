@@ -1,42 +1,44 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use base64ct::{Base64, Encoding};
-use serde::{Deserialize, Serialize};
+use actix_web::web::Data;
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use redis::aio::ConnectionManager;
+use redis::Client;
+const REDIS_CON_STRING: &str = "redis://127.0.0.1/";
 
-#[get("/")]
-async fn index() -> Result<HttpResponse, actix_web::Error> {
-    let response_body = "Hello world!!";
-    Ok(HttpResponse::Ok().body(response_body))
+mod handlers;
+
+#[derive(Clone)]
+pub struct Clients {
+    redis_client: Client,
+    redis_connection_manager: ConnectionManager,
+}
+
+impl Clients {
+    pub fn new(redis_client: Client, redis_connection_manager: ConnectionManager) -> Self {
+        Clients {
+            redis_client,
+            redis_connection_manager,
+        }
+    }
 }
 
 #[actix_rt::main]
 async fn main() -> Result<(), actix_web::Error> {
-    HttpServer::new(move || App::new().service(get_url).service(post_url))
-        .bind("0.0.0.0:8080")?
-        .run()
-        .await?;
+    // let redis_uri = "http://127.0.0.1:6379";
+    // let redis_client = Client::open(redis_uri).expect("Can't create Redis client");
+    // let redis_connection_manager = redis_client
+    //     .get_tokio_connection_manager()
+    //     .await
+    //     .expect("Can't create Redis connection manager");
+    // let clients = Data::new(Clients::new(redis_client, redis_connection_manager.clone()));
+    HttpServer::new(move || {
+        App::new()
+            .route("/", web::get().to(handlers::index))
+            .route("/{hashed_url}", web::get().to(handlers::get_url))
+            .route("/", web::post().to(handlers::post_url))
+        // .app_data(clients.clone())
+    })
+    .bind("0.0.0.0:8080")?
+    .run()
+    .await?;
     Ok(())
-}
-
-#[get("/{hashed_url}")]
-async fn get_url(hashed_url: web::Path<String>) -> impl Responder {
-    let res = format!("{}", hashed_url.as_str());
-    HttpResponse::Ok().body(res)
-}
-
-#[post("/")]
-async fn post_url(data: web::Json<PostData>) -> impl Responder {
-    let hashed = Base64::encode_string(data.0.url.as_bytes());
-    HttpResponse::Ok().body(hashed)
-}
-
-// #[delete("/{hashed_url}")]
-// async fn delete_url(hashed_url: web::Path<String>) -> impl Responder {
-//     let res = format!("{}", hashed_url.as_str());
-//     HttpResponse::Ok().body(res)
-// }
-
-#[derive(Debug, Serialize, Deserialize)]
-struct PostData {
-    user_name: String,
-    url: String,
 }
