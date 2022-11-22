@@ -12,9 +12,15 @@ pub async fn index() -> &'static str {
     "Hello world!!"
 }
 
-pub async fn get_url(hashed_url: web::Path<String>) -> impl Responder {
-    let res = format!("{}", hashed_url.as_str());
-    HttpResponse::Ok().body(res)
+pub async fn get_url(
+    hashed_url: web::Path<String>,
+    url_shortener_service: web::Data<UrlShortenerService>,
+) -> actix_web::Result<HttpResponse> {
+    let raw_url = url_shortener_service
+        .get_url(hashed_url.into_inner())
+        .await
+        .expect("connection failed");
+    Ok(HttpResponse::Ok().json(ResponseBody { url: raw_url }))
 }
 
 pub async fn post_url(

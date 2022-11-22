@@ -16,6 +16,14 @@ impl UrlShortenerService {
             redis_connection_manager,
         }
     }
+    pub async fn get_url(&self, hashed_url: String) -> Result<String> {
+        let raw_url = self
+            .redis_connection_manager
+            .clone()
+            .get(hashed_url.clone())
+            .await?;
+        Ok(raw_url)
+    }
     pub async fn post_url(&self, url: String) -> Result<String> {
         let hashed_url = Base64::encode_string(url.as_bytes());
         self.redis_connection_manager
