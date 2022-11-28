@@ -1,5 +1,5 @@
-use actix_web::web::{service, Data};
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::web::Data;
+use actix_web::{web, App, HttpServer};
 use redis::Client;
 
 const REDIS_URI: &str = "redis://redis:6379";
@@ -23,6 +23,7 @@ async fn main() -> Result<(), actix_web::Error> {
             .route("/", web::get().to(handlers::index))
             .route("/{hashed_url}", web::get().to(handlers::get_url))
             .route("/", web::post().to(handlers::post_url))
+            .route("/{hashed_url}", web::delete().to(handlers::delete_url))
             .app_data(url_shortener_services.clone())
     })
     .bind("0.0.0.0:8080")?

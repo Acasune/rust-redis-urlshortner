@@ -1,5 +1,6 @@
-﻿use anyhow::{Context, Result};
-use base64ct::{Base64, Encoding};
+﻿use anyhow::Result;
+use crypto::digest::Digest;
+use crypto::md5::Md5;
 use redis::aio::ConnectionManager;
 use redis::{AsyncCommands, Client};
 
@@ -25,11 +26,21 @@ impl UrlShortenerService {
         Ok(raw_url)
     }
     pub async fn post_url(&self, url: String) -> Result<String> {
-        let hashed_url = Base64::encode_string(url.as_bytes());
+        let mut md5 = Md5::new();
+        md5.input(url.as_bytes());
+        let hashed_url = md5.result_str();
         self.redis_connection_manager
             .clone()
             .set(hashed_url.clone(), url)
             .await?;
         Ok(hashed_url)
+    }
+    pub async fn delete_url(&self, hashed_url: String) -> Result<()> {
+        let result = self
+            .redis_connection_manager
+            .clone()
+            .del(hashed_url)
+            .await?;
+        Ok(())
     }
 }

@@ -1,5 +1,4 @@
-﻿use actix_web::{web, HttpRequest, HttpResponse, Responder};
-use base64ct::{Base64, Encoding};
+﻿use actix_web::{web, HttpResponse};
 use serde::{Deserialize, Serialize};
 
 use crate::services::UrlShortenerService;
@@ -34,11 +33,15 @@ pub async fn post_url(
     Ok(HttpResponse::Ok().json(ResponseBody { url: hashed }))
 }
 
-// #[delete("/{hashed_url}")]
-// async fn delete_url(hashed_url: web::Path<String>) -> impl Responder {
-//     let res = format!("{}", hashed_url.as_str());
-//     HttpResponse::Ok().body(res)
-// }
+pub async fn delete_url(
+    hashed_url: web::Path<String>,
+    url_shortener_service: web::Data<UrlShortenerService>,
+) -> actix_web::Result<HttpResponse, actix_web::Error> {
+    let result = url_shortener_service
+        .delete_url(hashed_url.to_string())
+        .await;
+    Ok(HttpResponse::Ok().finish())
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PostData {
