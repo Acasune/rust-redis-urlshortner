@@ -3,12 +3,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::services::UrlShortenerService;
 
-pub async fn index() -> &'static str {
-    // Result<HttpResponse, actix_web::Error> {
-    // print!("hello");
-    // let response_body = "Hello world!!";
-    // Ok(HttpResponse::Ok().body(response_body))
-    "Hello world!!"
+pub async fn index(
+    url_shortener_service: web::Data<UrlShortenerService>,
+) -> actix_web::Result<HttpResponse> {
+    let all_urls = url_shortener_service
+        .get_all_urls()
+        .await
+        .expect("connection failed");
+    Ok(HttpResponse::Ok().json(ResponseBodyInit { urls: all_urls }))
 }
 
 pub async fn get_url(
@@ -37,7 +39,7 @@ pub async fn delete_url(
     hashed_url: web::Path<String>,
     url_shortener_service: web::Data<UrlShortenerService>,
 ) -> actix_web::Result<HttpResponse, actix_web::Error> {
-    let result = url_shortener_service
+    let _result = url_shortener_service
         .delete_url(hashed_url.to_string())
         .await;
     Ok(HttpResponse::Ok().finish())
@@ -49,6 +51,10 @@ pub struct PostData {
     url: String,
 }
 
+#[derive(Serialize)]
+pub struct ResponseBodyInit {
+    urls: Vec<String>,
+}
 #[derive(Serialize)]
 pub struct ResponseBody {
     url: String,

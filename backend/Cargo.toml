@@ -14,3 +14,5 @@ base64ct = { version = "1.5.3", features = ["alloc"] }
 redis = { version = "0.21.4", features = ["tokio-comp", "connection-manager"] }
 anyhow = "1.0"
 rust-crypto="0.2.36"
+futures-sink = "^0.3.7"
+futures-util = { version = "^0.3.7", features = ["sink"] }
