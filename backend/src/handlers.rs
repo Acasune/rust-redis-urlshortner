@@ -19,10 +19,10 @@ pub async fn index(
 }
 
 pub async fn get_url(
-    hashed_url: web::Path<String>,
+    hashed: web::Path<String>,
     url_shortener_service: web::Data<UrlShortenerService>,
 ) -> actix_web::Result<HttpResponse, ApiErrorResponse> {
-    let result = url_shortener_service.get_url(hashed_url.into_inner()).await;
+    let result = url_shortener_service.get_url(hashed.into_inner()).await;
     match result {
         Ok(url) => {
             Ok(HttpResponse::build(StatusCode::SEE_OTHER).json(ResponseBodyGetUrl { url: url }))
@@ -38,7 +38,7 @@ pub async fn post_url(
     let result = url_shortener_service.post_url(data.0.url).await;
     match result {
         Ok(hashed) => Ok(
-            HttpResponse::build(StatusCode::OK).json(ResponseBodyPostUrl { hashed_url: hashed })
+            HttpResponse::build(StatusCode::OK).json(ResponseBodyPostUrl { hashed: hashed })
         ),
 
         _ => Err(ApiErrorResponse::ServiceUnavailable),
@@ -46,16 +46,16 @@ pub async fn post_url(
 }
 
 pub async fn delete_url(
-    hashed_url: web::Path<String>,
+    hashed: web::Path<String>,
     url_shortener_service: web::Data<UrlShortenerService>,
 ) -> actix_web::Result<HttpResponse, ApiErrorResponse> {
     let result = url_shortener_service
-        .delete_url(hashed_url.to_string())
+        .delete_url(hashed.to_string())
         .await;
     match result {
         Ok(()) => Ok(
             HttpResponse::build(StatusCode::OK).json(ResponseBodyDeleteUrl {
-                hashed_url: hashed_url.to_string(),
+                hashed: hashed.to_string(),
             }),
         ),
         _ => Err(ApiErrorResponse::NotFound),

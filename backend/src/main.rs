@@ -8,6 +8,7 @@ mod errors;
 mod handlers;
 mod responses;
 mod services;
+mod types;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -23,9 +24,9 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .route("/", web::get().to(handlers::index))
-            .route("/{hashed_url}", web::get().to(handlers::get_url))
+            .route("/{hashed}", web::get().to(handlers::get_url))
             .route("/", web::post().to(handlers::post_url))
-            .route("/{hashed_url}", web::delete().to(handlers::delete_url))
+            .route("/{hashed}", web::delete().to(handlers::delete_url))
             .app_data(url_shortener_services.clone())
     })
     .bind("0.0.0.0:8080")?
