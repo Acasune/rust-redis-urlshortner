@@ -6,14 +6,12 @@ use redis::{AsyncCommands, Client, RedisError};
 
 #[derive(Clone)]
 pub struct UrlShortenerService {
-    redis_client: Client,
     redis_connection_manager: ConnectionManager,
 }
 
 impl UrlShortenerService {
     pub fn new(redis_client: Client, redis_connection_manager: ConnectionManager) -> Self {
         UrlShortenerService {
-            redis_client,
             redis_connection_manager,
         }
     }

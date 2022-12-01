@@ -14,7 +14,7 @@ pub async fn index(
     let result = url_shortener_service.get_all_urls().await;
     match result {
         Ok(all_urls) => Ok(HttpResponse::Ok().json(ResponseBodyInit { urls: all_urls })),
-        RedisError => Err(ApiErrorResponse::NotFound),
+        _ => Err(ApiErrorResponse::NotFound),
     }
 }
 
@@ -24,8 +24,10 @@ pub async fn get_url(
 ) -> actix_web::Result<HttpResponse, ApiErrorResponse> {
     let result = url_shortener_service.get_url(hashed_url.into_inner()).await;
     match result {
-        Ok(url) => Ok(HttpResponse::build(StatusCode::OK).json(ResponseBodyGetUrl { url: url })),
-        RedisError => Err(ApiErrorResponse::NotFound),
+        Ok(url) => {
+            Ok(HttpResponse::build(StatusCode::SEE_OTHER).json(ResponseBodyGetUrl { url: url }))
+        }
+        _ => Err(ApiErrorResponse::NotFound),
     }
 }
 
@@ -39,7 +41,7 @@ pub async fn post_url(
             HttpResponse::build(StatusCode::OK).json(ResponseBodyPostUrl { hashed_url: hashed })
         ),
 
-        RedisError => Err(ApiErrorResponse::ServiceUnavailable),
+        _ => Err(ApiErrorResponse::ServiceUnavailable),
     }
 }
 
@@ -56,7 +58,7 @@ pub async fn delete_url(
                 hashed_url: hashed_url.to_string(),
             }),
         ),
-        RedisError => Err(ApiErrorResponse::NotFound),
+        _ => Err(ApiErrorResponse::NotFound),
     }
 }
 
