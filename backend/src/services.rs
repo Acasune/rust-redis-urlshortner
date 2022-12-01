@@ -1,9 +1,8 @@
-﻿use anyhow::Result;
-use crypto::digest::Digest;
+﻿use crypto::digest::Digest;
 use crypto::md5::Md5;
 use futures_util::future;
 use redis::aio::ConnectionManager;
-use redis::{AsyncCommands, Client};
+use redis::{AsyncCommands, Client, RedisError};
 
 #[derive(Clone)]
 pub struct UrlShortenerService {
@@ -18,7 +17,7 @@ impl UrlShortenerService {
             redis_connection_manager,
         }
     }
-    pub async fn get_all_urls(&self) -> Result<Vec<String>> {
+    pub async fn get_all_urls(&self) -> Result<Vec<String>, RedisError> {
         let mut mgr = self.redis_connection_manager.clone();
         let all_urls: Vec<String> = mgr.keys("*").await?;
         let futures = all_urls.into_iter().map(|key| {
@@ -28,10 +27,11 @@ impl UrlShortenerService {
         let result = future::join_all(futures)
             .await
             .into_iter()
-            .collect::<Result<Vec<_>>>();
-        result
+            .map(|v| v.unwrap())
+            .collect::<Vec<String>>();
+        Ok(result)
     }
-    pub async fn get_url(&self, hashed_url: String) -> Result<String> {
+    pub async fn get_url(&self, hashed_url: String) -> Result<String, RedisError> {
         let raw_url = self
             .redis_connection_manager
             .clone()
@@ -39,7 +39,7 @@ impl UrlShortenerService {
             .await?;
         Ok(raw_url)
     }
-    pub async fn post_url(&self, url: String) -> Result<String> {
+    pub async fn post_url(&self, url: String) -> Result<String, RedisError> {
         let mut md5 = Md5::new();
         md5.input(url.as_bytes());
         let hashed_url = md5.result_str();
@@ -49,9 +49,8 @@ impl UrlShortenerService {
             .await?;
         Ok(hashed_url)
     }
-    pub async fn delete_url(&self, hashed_url: String) -> Result<()> {
-        let result = self
-            .redis_connection_manager
+    pub async fn delete_url(&self, hashed_url: String) -> Result<(), RedisError> {
+        self.redis_connection_manager
             .clone()
             .del(hashed_url)
             .await?;

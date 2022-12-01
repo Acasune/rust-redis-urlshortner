@@ -18,7 +18,12 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - './backend/:/backend'
+      - ./backend/:/backend
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
     depends_on:
       - redis
     command: /bin/sh -c "cargo watch -x run"
+volumes:
+  cargo-cache:
+  target-cache:

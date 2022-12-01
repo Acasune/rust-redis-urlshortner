@@ -1,14 +1,16 @@
 use actix_web::web::Data;
-use actix_web::{web, App, HttpServer};
+use actix_web::{web, App, HttpResponse, HttpServer};
 use redis::Client;
 
 const REDIS_URI: &str = "redis://redis:6379";
 
+mod errors;
 mod handlers;
+mod responses;
 mod services;
 
 #[actix_rt::main]
-async fn main() -> Result<(), actix_web::Error> {
+async fn main() -> std::io::Result<()> {
     let redis_client = Client::open(REDIS_URI).expect("Can't create Redis client");
     let redis_connection_manager = redis_client
         .get_tokio_connection_manager()
@@ -28,6 +30,5 @@ async fn main() -> Result<(), actix_web::Error> {
     })
     .bind("0.0.0.0:8080")?
     .run()
-    .await?;
-    Ok(())
+    .await
 }
