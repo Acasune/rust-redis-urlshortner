@@ -1,4 +1,4 @@
-FROM rust:1.43.1 as develop-stage
+FROM rust:1.66-buster as develop-stage
 
 WORKDIR /backend
 
