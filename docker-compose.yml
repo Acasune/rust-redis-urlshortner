@@ -7,7 +7,18 @@ services:
       - '8001:8001'
     expose:
       - "6379"
-  dev:
+  frontend:
+    build:
+      context: ./frontend
+      target: develop-stage
+    ports: 
+      - '3000:3000'
+    volumes:
+      - ./frontend/:/frontend
+    working_dir: /frontend  
+    command: "npm run dev"
+    tty: true
+  backend:
     build:
       context: ./backend
       target: develop-stage
