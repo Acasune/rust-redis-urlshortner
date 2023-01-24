@@ -10,7 +10,7 @@ services:
   dev:
     build:
       context: ./backend
-      target: "develop-starge"
+      target: develop-stage
       dockerfile: Dockerfile
     environment:
       REDIS_HOST: redis
