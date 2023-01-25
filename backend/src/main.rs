@@ -1,5 +1,5 @@
 use actix_web::web::Data;
-use actix_web::{web, App, HttpResponse, HttpServer};
+use actix_web::{web,http, App, HttpResponse, HttpServer};
 use redis::Client;
 use actix_cors::Cors;
 
@@ -23,14 +23,17 @@ async fn main() -> std::io::Result<()> {
         redis_connection_manager.clone(),
     ));
     HttpServer::new(move || {
-        let cors =  Cors::default().allowed_origin("http://localhost:3000");
+        let cors =  Cors::default()
+            .allowed_origin("http://localhost:3000")
+            .allowed_methods(vec!["GET", "POST"])
+            .allowed_header(http::header::CONTENT_TYPE);
         App::new()
-        .wrap(cors)
-        .route("/", web::get().to(handlers::index))
-        .route("/{hashed}", web::get().to(handlers::get_url))
-        .route("/", web::post().to(handlers::post_url))
-        .route("/{hashed}", web::delete().to(handlers::delete_url))
-        .app_data(url_shortener_services.clone())
+            .wrap(cors)
+            .route("/", web::get().to(handlers::index))
+            .route("/{hashed}", web::get().to(handlers::get_url))
+            .route("/", web::post().to(handlers::post_url))
+            .route("/{hashed}", web::delete().to(handlers::delete_url))
+            .app_data(url_shortener_services.clone())
     })
     .bind("0.0.0.0:8080")?
     .run()

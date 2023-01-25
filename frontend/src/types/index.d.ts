@@ -4,7 +4,6 @@ export type Data = {
     hashed: string
     url: string
     }]
-
 }
 
 // API Context
