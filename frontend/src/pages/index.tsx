@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import { ApiContext, Data } from '@/types/data'
-import { fetcher } from '@/ulils'
 import Head from 'next/head'
+import { Button, FormLabel, HStack, Input, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, VStack } from '@chakra-ui/react'
 
 export default function Home() {
   const {ret, isLoading} = useGetAllUrls()
@@ -13,11 +13,30 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <div>
-        {ret.map((item, idx) => (
-          <><p>{item.hashed}</p><p>{item.url}</p></>
-          ))}
-        </div>
+        <VStack>        
+          <FormLabel htmlFor="name">Register new URL</FormLabel>
+          <HStack w="30vw">
+            <Input placeholder='Add new URL' />
+            <Button  colorScheme='blue'>Submit</Button>
+          </HStack>
+        </VStack>
+
+        <TableContainer>
+          <Table variant='simple'>
+            <Thead>
+              <Tr>
+                <Th>Hash vals</Th>
+                <Th>Raw urls</Th>
+                <Th>Actions</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+            {ret.map((item, idx) => (
+              <Tr><Td>{item.hashed}</Td><Td>{item.url}</Td><Td><Button colorScheme='blue'>Delete</Button></Td></Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </main>
     </>
   )

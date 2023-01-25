@@ -33,7 +33,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.1",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^6.5.1",
     "prettier": "^2.8.3",
     "typescript-eslint": "^0.0.1-alpha.0"
   }
