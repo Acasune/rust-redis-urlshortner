@@ -12,7 +12,6 @@ export type AddUrlProps = {
     url:string
 } 
 export const addUrl = async (prop:AddUrlProps,context:ApiContext) : Promise<AddUrl> => {
- console.log(JSON.stringify(prop))
     return await fetcher(`${context.apiRootUrl}`, {
         method: 'POST',
         headers: {

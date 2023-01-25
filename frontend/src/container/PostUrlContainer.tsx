@@ -1,4 +1,4 @@
-import { Button, FormLabel, HStack, Input, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, VStack } from '@chakra-ui/react'
+import { Button, FormLabel, HStack, Input, VStack } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useForm } from "react-hook-form";
 import { addUrl } from 'service/post-url';

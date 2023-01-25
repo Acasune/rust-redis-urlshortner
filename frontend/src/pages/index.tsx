@@ -3,6 +3,8 @@ import Head from 'next/head'
 import { Button, FormLabel, HStack, Input, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, VStack } from '@chakra-ui/react'
 import { useGetAllUrls } from 'service/get-all-urls'
 import PostUrlContainer from 'container/PostUrlContainer'
+import DelUrlButton from 'container/DelUrlButton'
+import type {DelUrlButtonProps} from 'container/DelUrlButton'
 
 export default function Home() {
   const {ret, isLoading} = useGetAllUrls()
@@ -28,7 +30,7 @@ export default function Home() {
             </Thead>
             <Tbody>
             {ret.map((item, idx) => (
-              <Tr><Td>{item.hashed}</Td><Td>{item.url}</Td><Td><Button colorScheme='blue'>Delete</Button></Td></Tr>
+              <Tr key={idx}><Td>{item.hashed}</Td><Td>{item.url}</Td><Td><DelUrlButton hash={item.hashed} /></Td></Tr>
               ))}
             </Tbody>
           </Table>
