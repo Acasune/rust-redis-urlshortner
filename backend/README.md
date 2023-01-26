@@ -1,4 +1,9 @@
 ﻿
+## Activate backend.
+
+```
+  docker compose up backend -d
+```
 
 
 ## Get all urls stored in Redis
