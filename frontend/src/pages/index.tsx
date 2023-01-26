@@ -1,6 +1,6 @@
 
 import Head from 'next/head'
-import { Button, FormLabel, HStack, Input, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, VStack } from '@chakra-ui/react'
+import { Button, FormLabel, HStack, Input, Link, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, VStack } from '@chakra-ui/react'
 import { useGetAllUrls } from 'service/get-all-urls'
 import PostUrlContainer from 'container/PostUrlContainer'
 import DelUrlButton from 'container/DelUrlButton'
@@ -30,7 +30,9 @@ export default function Home() {
             </Thead>
             <Tbody>
             {ret.map((item, idx) => (
-              <Tr key={idx}><Td>{item.hashed}</Td><Td>{item.url}</Td><Td><DelUrlButton hash={item.hashed} /></Td></Tr>
+              <Tr key={idx}><Td><Link href={item.url} isExternal>
+             {item.hashed}
+            </Link></Td><Td>{item.url}</Td><Td><DelUrlButton hash={item.hashed} /></Td></Tr>
               ))}
             </Tbody>
           </Table>

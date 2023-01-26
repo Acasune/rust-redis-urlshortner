@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react'
+import { useRouter } from 'next/navigation';
 import { delUrl } from 'service/delete-url';
 
 export type DelUrlButtonProps = {
@@ -6,6 +7,7 @@ export type DelUrlButtonProps = {
 }
 
 const DelUrlButton = ({hash}:DelUrlButtonProps) => {
+  const router = useRouter();
   const onClick = async (data: any) => {
     try {
       const ret = await delUrl({hash},{apiRootUrl:'http://localhost:8080/'})
@@ -14,6 +16,8 @@ const DelUrlButton = ({hash}:DelUrlButtonProps) => {
         window.alert(err.message)
       }
     }
+    
+    router.refresh();
   }
   return (
     <Button colorScheme='blue' onClick={onClick}>Delete</Button>

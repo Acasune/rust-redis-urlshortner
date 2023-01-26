@@ -1,4 +1,5 @@
 import { Button, FormLabel, HStack, Input, VStack } from '@chakra-ui/react'
+import { useRouter } from 'next/navigation';
 import { useState } from 'react'
 import { useForm } from "react-hook-form";
 import { addUrl } from 'service/post-url';
@@ -10,9 +11,11 @@ const PostUrlContainer = () => {
     handleSubmit,
     formState: { errors }
   } = useForm();
+  const router = useRouter();
   const onSubmit = async (data: any) => {
     try {
       const ret = await addUrl({user_name:'Yamada taro', url:data.url},{apiRootUrl:'http://localhost:8080/'})
+      router.refresh()
     } catch (err:unknown) {
       if (err instanceof Error) {
         window.alert(err.message)
