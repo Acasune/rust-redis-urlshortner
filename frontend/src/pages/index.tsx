@@ -1,13 +1,20 @@
-
+import {
+  Link,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react'
 import Head from 'next/head'
-import { Button, FormLabel, HStack, Input, Link, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, VStack } from '@chakra-ui/react'
-import { useGetAllUrls } from 'service/get-all-urls'
-import PostUrlContainer from 'container/PostUrlContainer'
 import DelUrlButton from 'container/DelUrlButton'
-import type {DelUrlButtonProps} from 'container/DelUrlButton'
+import PostUrlContainer from 'container/PostUrlContainer'
+import { useGetAllUrls } from 'service/get-all-urls'
 
 export default function Home() {
-  const {ret, isLoading} = useGetAllUrls()
+  const { ret, isLoading } = useGetAllUrls()
   return (
     <>
       <Head>
@@ -17,10 +24,10 @@ export default function Home() {
       </Head>
       <main>
         <h1>rust-redis-urlshortner</h1>
-        <PostUrlContainer/>
+        <PostUrlContainer />
 
         <TableContainer>
-          <Table variant='simple'>
+          <Table variant="simple">
             <Thead>
               <Tr>
                 <Th>Hash vals</Th>
@@ -29,10 +36,18 @@ export default function Home() {
               </Tr>
             </Thead>
             <Tbody>
-            {ret.map((item, idx) => (
-              <Tr key={idx}><Td><Link href={item.url} isExternal>
-             {item.hashed}
-            </Link></Td><Td>{item.url}</Td><Td><DelUrlButton hash={item.hashed} /></Td></Tr>
+              {ret.map((item, idx) => (
+                <Tr key={idx}>
+                  <Td>
+                    <Link href={item.url} isExternal>
+                      {item.hashed}
+                    </Link>
+                  </Td>
+                  <Td>{item.url}</Td>
+                  <Td>
+                    <DelUrlButton hash={item.hashed} />
+                  </Td>
+                </Tr>
               ))}
             </Tbody>
           </Table>

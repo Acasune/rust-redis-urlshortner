@@ -1,5 +1,9 @@
 // 1. Import the extendTheme function
-import { ChakraBaseProvider, ChakraProvider, extendTheme } from '@chakra-ui/react'
+import {
+  ChakraBaseProvider,
+  ChakraProvider,
+  extendTheme,
+} from '@chakra-ui/react'
 import { AppProps } from 'next/app'
 
 // 2. Extend the theme to include custom colors, fonts, etc
@@ -15,8 +19,8 @@ const theme = extendTheme({ colors })
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-  <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme}>
       <Component {...pageProps} />
-  </ChakraProvider>
+    </ChakraProvider>
   )
 }
